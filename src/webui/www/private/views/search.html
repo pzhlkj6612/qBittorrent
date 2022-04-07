@@ -9,6 +9,17 @@
         background-position: left;
     }
 
+    #searchPatternCancelButton {
+        background-color: transparent;
+        border: 0px solid transparent;
+        color: transparent;
+        cursor: pointer;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        width: 2em;
+    }
+
     #categorySelect {
         width: 150px;
     }
@@ -79,8 +90,9 @@
 
 <div id="searchResults">
     <div style="overflow: hidden; height: 70px;">
-        <div style="margin: 20px 0; height: 30px;">
+        <div style="margin: 20px 0; height: 30px; position: relative;">
             <input type="text" id="searchPattern" class="searchInputField" placeholder="QBT_TR(Search)QBT_TR[CONTEXT=SearchEngineWidget]" autocorrect="off" autocapitalize="none" />
+            <button id="searchPatternCancelButton" class="invisible" type="reset" aria-label="Clear search pattern"></button>
             <select id="categorySelect" class="searchInputField" onchange="qBittorrent.Search.categorySelected()"></select>
             <select id="pluginsSelect" class="searchInputField" onchange="qBittorrent.Search.pluginSelected()"></select>
             <button id="startSearchButton" class="searchInputField" onclick="qBittorrent.Search.startStopSearch()">QBT_TR(Search)QBT_TR[CONTEXT=SearchEngineWidget]</button>
@@ -578,6 +590,24 @@
                 }
             }).send();
         };
+
+        $('searchPattern').addEvent('input', function() {
+            const value = this.get("value");
+            if (value.length > 0) {
+                this.setStyle('background-image', 'url("../icons/edit-delete.svg")');
+                $('searchPatternCancelButton').removeClass("invisible");
+            }
+            else {
+                this.setStyle('background-image', undefined);
+                $('searchPatternCancelButton').addClass("invisible");
+            }
+        });
+
+        $('searchPatternCancelButton').addEvent('click', function () {
+            $('searchPattern').value = '';
+            $('searchPattern').fireEvent('input');
+            $('searchPattern').focus();
+        });
 
         const getPlugin = function(name) {
             for (let i = 0; i < searchPlugins.length; ++i)

@@ -1173,6 +1173,14 @@ window.addEvent('load', function() {
     // listen for changes to torrentsFilterInput
     $('torrentsFilterInput').addEvent('input', function() {
         const value = $('torrentsFilterInput').get("value");
+        if (value.length > 0) {
+            this.setStyle('background-image', 'url("../icons/edit-delete.svg")');
+            $('torrentsFilterInputCancelButton').removeClass("invisible");
+        }
+        else {
+            this.setStyle('background-image', undefined);
+            $('torrentsFilterInputCancelButton').addClass("invisible");
+        }
         if (value !== prevTorrentsFilterValue) {
             prevTorrentsFilterValue = value;
             clearTimeout(torrentsFilterInputTimer);
@@ -1180,6 +1188,12 @@ window.addEvent('load', function() {
                 torrentsTable.updateTable(false);
             }, 400);
         }
+    });
+
+    $('torrentsFilterInputCancelButton').addEvent('click', function () {
+        $('torrentsFilterInput').value = '';
+        $('torrentsFilterInput').fireEvent('input');
+        $('torrentsFilterInput').focus();
     });
 
     $('transfersTabLink').addEvent('click', showTransfersTab);

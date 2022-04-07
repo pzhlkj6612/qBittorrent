@@ -356,6 +356,7 @@ a.propButton img {
 #torrentsFilterToolbar {
     float: right;
     margin-right: 30px;
+    position: relative;
 }
 
 #torrentsFilterInput {
@@ -367,9 +368,21 @@ a.propButton img {
     width: 160px;
 }
 
+#torrentsFilterInputCancelButton {
+    background-color: transparent;
+    border: 0px solid transparent;
+    color: transparent;
+    cursor: pointer;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    width: 2em;
+}
+
 #torrentFilesFilterToolbar {
     float: right;
     margin-right: 30px;
+    position: relative;
 }
 
 #torrentFilesFilterInput {
@@ -379,6 +392,17 @@ a.propButton img {
     background-size: 1.5em;
     padding-left: 2em;
     width: 160px;
+}
+
+#torrentFilesFilterInputCancelButton {
+    background-color: transparent;
+    border: 0px solid transparent;
+    color: transparent;
+    cursor: pointer;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    width: 2em;
 }
 
 /* Tri-state checkbox */

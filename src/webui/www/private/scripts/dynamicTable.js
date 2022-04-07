@@ -1439,6 +1439,13 @@ window.qBittorrent.DynamicTable = (function() {
         },
 
         getFilteredAndSortedRows: function() {
+            // In Firefox, reloading with cache will preserve the content of *some* <input> textbox. See:
+            //   Bug With Firefox - Disabled Attribute of Input Not Resetting When Refreshing. https://stackoverflow.com/q/5985839
+            if ($('torrentsFilterInput').value.length > 0) {
+                $('torrentsFilterInput').setStyle('background-image', 'url("../icons/edit-delete.svg")');
+                $('torrentsFilterInputCancelButton').removeClass("invisible");
+            }
+
             const filteredRows = [];
 
             const rows = this.rows.getValues();

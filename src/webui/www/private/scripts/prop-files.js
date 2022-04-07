@@ -617,6 +617,14 @@ window.qBittorrent.PropFiles = (function() {
     // listen for changes to torrentFilesFilterInput
     $('torrentFilesFilterInput').addEvent('input', function() {
         const value = $('torrentFilesFilterInput').get("value");
+        if (value.length > 0) {
+            this.setStyle('background-image', 'url("../icons/edit-delete.svg")');
+            $('torrentFilesFilterInputCancelButton').removeClass("invisible");
+        }
+        else {
+            this.setStyle('background-image', undefined);
+            $('torrentFilesFilterInputCancelButton').addClass("invisible");
+        }
         if (value !== prevTorrentFilesFilterValue) {
             prevTorrentFilesFilterValue = value;
             torrentFilesTable.setFilter(value);
@@ -632,6 +640,12 @@ window.qBittorrent.PropFiles = (function() {
                     expandAllNodes();
             }, 400);
         }
+    });
+
+    $('torrentFilesFilterInputCancelButton').addEvent('click', function () {
+        $('torrentFilesFilterInput').value = '';
+        $('torrentFilesFilterInput').fireEvent('input');
+        $('torrentFilesFilterInput').focus();
     });
 
     /**
