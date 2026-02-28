@@ -30,6 +30,7 @@
 
 #include <libtorrent/version.hpp>
 
+#include <QBitArray>
 #include <QByteArray>
 #include <QDateTime>
 #include <QString>
@@ -201,6 +202,34 @@ PathList TorrentInfo::filesForPiece(const int pieceIndex) const
         res.push_back(filePath(i));
 
     return res;
+}
+
+PathList TorrentInfo::filesForMissingPieces(const QBitArray &peerPieces) const
+{
+    if (!isValid())
+        return {};
+
+    const int numFiles = filesCount();
+    const int peerPiecesSize = peerPieces.size();
+
+    PathList result;
+    for (int i = 0; i < numFiles; ++i)
+    {
+        const PieceRange range = filePieces(i);
+        if (range.isEmpty())
+            continue;
+
+        for (const int piece : range)
+        {
+            if ((piece >= peerPiecesSize) || !peerPieces.testBit(piece))
+            {
+                result.push_back(filePath(i));
+                break;
+            }
+        }
+    }
+
+    return result;
 }
 
 QList<int> TorrentInfo::fileIndicesForPiece(const int pieceIndex) const

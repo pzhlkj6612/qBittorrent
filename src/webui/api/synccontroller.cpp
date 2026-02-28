@@ -864,7 +864,9 @@ void SyncController::torrentPeersAction()
 
         if (torrent->hasMetadata())
         {
-            const PathList filePaths = torrent->info().filesForPiece(pi.downloadingPieceIndex());
+            PathList filePaths = torrent->info().filesForPiece(pi.downloadingPieceIndex());
+            if (filePaths.isEmpty() && !pi.isSeed())
+                filePaths = torrent->info().filesForMissingPieces(pi.pieces());
             QStringList filesForPiece;
             filesForPiece.reserve(filePaths.size());
             for (const Path &filePath : filePaths)

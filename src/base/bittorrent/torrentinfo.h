@@ -37,6 +37,7 @@
 #include "base/indexrange.h"
 #include "base/pathfwd.h"
 
+class QBitArray;
 class QByteArray;
 class QDateTime;
 class QString;
@@ -71,6 +72,7 @@ namespace BitTorrent
         qlonglong fileSize(int index) const;
         qlonglong fileOffset(int index) const;
         PathList filesForPiece(int pieceIndex) const;
+        PathList filesForMissingPieces(const QBitArray &peerPieces) const;
         QList<int> fileIndicesForPiece(int pieceIndex) const;
         QList<QByteArray> pieceHashes() const;
 
