@@ -340,18 +340,27 @@ void PeerListWidget::banSelectedPeers()
     const QModelIndexList selectedIndexes = selectionModel()->selectedRows();
 
     QList<QString> selectedIPs;
+    QStringList selectedPeers;
     selectedIPs.reserve(selectedIndexes.size());
+    selectedPeers.reserve(selectedIndexes.size());
 
     for (const QModelIndex &index : selectedIndexes)
     {
         const int row = m_proxyModel->mapToSource(index).row();
         const QString ip = m_listModel->item(row, PeerListColumns::IP_HIDDEN)->text();
+        const QString port = m_listModel->item(row, PeerListColumns::PORT)->text();
         selectedIPs += ip;
+
+        if (!ip.contains(u'.'))  // IPv6
+            selectedPeers << (u'[' + ip + u"]:" + port);
+        else  // IPv4
+            selectedPeers << (ip + u':' + port);
     }
 
     // Confirm before banning peer
     const QMessageBox::StandardButton btn = QMessageBox::question(this, tr("Ban peer permanently")
-        , tr("Are you sure you want to permanently ban the selected peers?"));
+        , tr("Are you sure you want to permanently ban the selected peers?")
+            + u'\n' + selectedPeers.join(u'\n'));
     if (btn != QMessageBox::Yes) return;
 
     for (const QString &ip : selectedIPs)

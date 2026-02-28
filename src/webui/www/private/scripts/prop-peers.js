@@ -159,7 +159,7 @@ window.qBittorrent.PropPeers ??= (() => {
                 if (selectedPeers.length === 0)
                     return;
 
-                if (confirm("QBT_TR(Are you sure you want to permanently ban the selected peers?)QBT_TR[CONTEXT=PeerListWidget]")) {
+                if (confirm("QBT_TR(Are you sure you want to permanently ban the selected peers?)QBT_TR[CONTEXT=PeerListWidget]" + "\n" + selectedPeers.join("\n"))) {
                     fetch("api/v2/transfer/banPeers", {
                         method: "POST",
                         body: new URLSearchParams({
