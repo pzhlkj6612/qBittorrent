@@ -70,6 +70,7 @@ namespace
             {BitTorrent::TorrentState::CheckingDownloading, u"TransferList.CheckingDownloading"_s},
             {BitTorrent::TorrentState::CheckingUploading, u"TransferList.CheckingUploading"_s},
             {BitTorrent::TorrentState::CheckingResumeData, u"TransferList.CheckingResumeData"_s},
+            {BitTorrent::TorrentState::QueuedForChecking, u"TransferList.QueuedForChecking"_s},
             {BitTorrent::TorrentState::StoppedDownloading, u"TransferList.StoppedDownloading"_s},
             {BitTorrent::TorrentState::StoppedUploading, u"TransferList.StoppedUploading"_s},
             {BitTorrent::TorrentState::Moving, u"TransferList.Moving"_s},
@@ -104,6 +105,7 @@ TransferListModel::TransferListModel(QObject *parent)
         {BitTorrent::TorrentState::QueuedUploading, tr("Queued", "Torrent is queued")},
         {BitTorrent::TorrentState::CheckingDownloading, tr("Checking", "Torrent local data is being checked")},
         {BitTorrent::TorrentState::CheckingUploading, tr("Checking", "Torrent local data is being checked")},
+        {BitTorrent::TorrentState::QueuedForChecking, tr("Queued for checking", "Torrent is waiting in queue for hash check")},
         {BitTorrent::TorrentState::CheckingResumeData, tr("Checking resume data", "Used when loading the torrents from disk after qbt is launched. It checks the correctness of the .fastresume file. Normally it is completed in a fraction of a second, unless loading many many torrents.")},
         {BitTorrent::TorrentState::StoppedDownloading, tr("Stopped")},
         {BitTorrent::TorrentState::StoppedUploading, tr("Completed")},
@@ -789,6 +791,7 @@ QIcon TransferListModel::getIconByState(const BitTorrent::TorrentState state) co
     case BitTorrent::TorrentState::CheckingDownloading:
     case BitTorrent::TorrentState::CheckingUploading:
     case BitTorrent::TorrentState::CheckingResumeData:
+    case BitTorrent::TorrentState::QueuedForChecking:
         return m_checkingIcon;
     case BitTorrent::TorrentState::Moving:
         return m_movingIcon;

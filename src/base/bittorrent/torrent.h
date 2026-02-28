@@ -100,6 +100,8 @@ namespace BitTorrent
         CheckingUploading,
         CheckingDownloading,
 
+        QueuedForChecking,
+
         StoppedDownloading,
         StoppedUploading,
 
