@@ -2092,6 +2092,15 @@ void TorrentImpl::handleTorrentChecked()
             else if (progress() == 1.0)
                 m_hasFinishedStatus = true;
 
+            // Update m_completedFiles based on actual file progress.
+            // This is needed because forceRecheck() resets m_completedFiles
+            // and file_completed_alert may not be fired for all files during recheck.
+            for (int i = 0; i < filesCount(); ++i)
+            {
+                if (m_filesProgress.at(i) == fileSize(i))
+                    m_completedFiles.setBit(i);
+            }
+
             adjustStorageLocation();
             manageActualFilePaths();
 
