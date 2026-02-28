@@ -124,7 +124,7 @@ PeerListWidget::PeerListWidget(PropertiesWidget *parent)
     m_listModel->setHeaderData(PeerListColumns::TOT_DOWN, Qt::Horizontal, tr("Downloaded", "i.e: total data downloaded"));
     m_listModel->setHeaderData(PeerListColumns::TOT_UP, Qt::Horizontal, tr("Uploaded", "i.e: total data uploaded"));
     m_listModel->setHeaderData(PeerListColumns::RELEVANCE, Qt::Horizontal, tr("Relevance", "i.e: How relevant this peer is to us. How many pieces it has that we don't."));
-    m_listModel->setHeaderData(PeerListColumns::DOWNLOADING_PIECE, Qt::Horizontal, tr("Files", "i.e. files that are being downloaded right now"));
+    m_listModel->setHeaderData(PeerListColumns::DOWNLOADING_PIECE, Qt::Horizontal, tr("Files", "i.e. files being downloaded from or needed by the peer"));
     // Set header text alignment
     m_listModel->setHeaderData(PeerListColumns::PORT, Qt::Horizontal, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
     m_listModel->setHeaderData(PeerListColumns::PROGRESS, Qt::Horizontal, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
@@ -521,7 +521,9 @@ void PeerListWidget::updatePeer(const int row, const BitTorrent::Torrent *torren
     setModelData(m_listModel, row, PeerListColumns::RELEVANCE, (Utils::String::fromDouble(peer.relevance() * 100, 1) + u'%')
             , peer.relevance(), intDataTextAlignment);
 
-    const PathList filePaths = torrent->info().filesForPiece(peer.downloadingPieceIndex());
+    PathList filePaths = torrent->info().filesForPiece(peer.downloadingPieceIndex());
+    if (filePaths.isEmpty() && !peer.isSeed())
+        filePaths = torrent->info().filesForMissingPieces(peer.pieces());
     QStringList downloadingFiles;
     downloadingFiles.reserve(filePaths.size());
     for (const Path &filePath : filePaths)
