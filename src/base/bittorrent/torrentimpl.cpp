@@ -50,6 +50,7 @@
 #include <QByteArray>
 #include <QCache>
 #include <QDebug>
+#include <QFileInfo>
 #include <QFuture>
 #include <QPointer>
 #include <QPromise>
@@ -903,6 +904,9 @@ int TorrentImpl::piecesHave() const
 
 qreal TorrentImpl::progress() const
 {
+    if (isMoveInProgress())
+        return m_moveProgress;
+
     if (isChecking())
         return m_nativeStatus.progress;
 
@@ -2012,6 +2016,9 @@ void TorrentImpl::moveStorage(const Path &newPath, const MoveStorageContext cont
         if (!m_storageIsMoving)
         {
             m_storageIsMoving = true;
+            m_moveDestPath = newPath;
+            m_moveTotalBytes = m_nativeStatus.total_wanted_done;
+            m_moveProgress = 0;
             updateState();
             m_session->handleTorrentStorageMovingStateChanged(this);
         }
@@ -2046,6 +2053,17 @@ void TorrentImpl::handleMoveStorageJobFinished(const Path &path, const MoveStora
         m_downloadPath = path;
     m_storageIsMoving = hasOutstandingJob;
     m_nativeStatus.save_path = path.toString().toStdString();
+
+    if (!m_storageIsMoving)
+    {
+        m_moveProgress = 1;
+        m_moveTotalBytes = 0;
+        m_moveDestPath = Path();
+    }
+    else
+    {
+        m_moveProgress = 0;
+    }
 
     m_session->handleTorrentSavePathChanged(this);
     deferredRequestResumeData();
@@ -2553,6 +2571,27 @@ bool TorrentImpl::applySSLParameters()
 bool TorrentImpl::isMoveInProgress() const
 {
     return m_storageIsMoving;
+}
+
+void TorrentImpl::updateMoveProgress()
+{
+    if (!isMoveInProgress() || (m_moveTotalBytes <= 0) || m_moveDestPath.isEmpty())
+        return;
+
+    qlonglong movedBytes = 0;
+    const lt::file_storage &files = nativeTorrentInfo()->files();
+    for (const lt::file_index_t &nativeIndex : asConst(m_torrentInfo.nativeIndexes()))
+    {
+        if (files.pad_file_at(nativeIndex))
+            continue;
+
+        const Path filePath = m_moveDestPath / Path(files.file_path(nativeIndex));
+        const QFileInfo fileInfo {filePath.data()};
+        if (fileInfo.exists())
+            movedBytes += fileInfo.size();
+    }
+
+    m_moveProgress = std::clamp(static_cast<qreal>(movedBytes) / m_moveTotalBytes, qreal(0), qreal(1));
 }
 
 void TorrentImpl::updateStatus(const lt::torrent_status &nativeStatus)
