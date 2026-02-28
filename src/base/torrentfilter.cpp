@@ -187,7 +187,8 @@ bool TorrentFilter::matchStatus(const Torrent *const torrent) const
     case Checking:
         return (state == TorrentState::CheckingUploading)
                 || (state == TorrentState::CheckingDownloading)
-                || (state == TorrentState::CheckingResumeData);
+                || (state == TorrentState::CheckingResumeData)
+                || (state == TorrentState::QueuedForChecking);
     case Moving:
         return torrent->isMoving();
     case Errored:

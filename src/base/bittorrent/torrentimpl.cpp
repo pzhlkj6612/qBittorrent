@@ -1258,7 +1258,10 @@ void TorrentImpl::updateState()
     else if ((m_nativeStatus.state == lt::torrent_status::checking_files) && !isStopped())
     {
         // If the torrent is not just in the "checking" state, but is being actually checked
-        m_state = m_hasFinishedStatus ? TorrentState::CheckingUploading : TorrentState::CheckingDownloading;
+        if ((m_nativeStatus.flags & lt::torrent_flags::auto_managed) && (m_nativeStatus.flags & lt::torrent_flags::paused))
+            m_state = TorrentState::QueuedForChecking;
+        else
+            m_state = m_hasFinishedStatus ? TorrentState::CheckingUploading : TorrentState::CheckingDownloading;
     }
     else if (isFinished())
     {

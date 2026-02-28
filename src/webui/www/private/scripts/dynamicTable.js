@@ -1617,7 +1617,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                     break;
                 }
                 case "checking":
-                    if ((state !== "checkingUP") && (state !== "checkingDL") && (state !== "checkingResumeData"))
+                    if ((state !== "checkingUP") && (state !== "checkingDL") && (state !== "checkingResumeData") && (state !== "queuedForChecking"))
                         return false;
                     break;
                 case "moving":
