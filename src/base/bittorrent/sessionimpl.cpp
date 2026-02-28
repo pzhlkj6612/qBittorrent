@@ -6341,6 +6341,16 @@ void SessionImpl::handleStateUpdateAlert(const lt::state_update_alert *alert)
         updatedTorrents.push_back(torrent);
     }
 
+    if (!m_moveStorageQueue.isEmpty())
+    {
+        TorrentImpl *const movingTorrent = getTorrent(m_moveStorageQueue.constFirst().torrentHandle);
+        if (movingTorrent && !updatedTorrents.contains(movingTorrent))
+        {
+            movingTorrent->updateMoveProgress();
+            updatedTorrents.push_back(movingTorrent);
+        }
+    }
+
     if (!updatedTorrents.isEmpty())
         emit torrentsUpdated(updatedTorrents);
 

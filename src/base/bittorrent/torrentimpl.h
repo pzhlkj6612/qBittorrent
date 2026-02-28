@@ -299,6 +299,7 @@ namespace BitTorrent
         void updateState();
 
         bool isMoveInProgress() const;
+        void updateMoveProgress();
 
         void setAutoManaged(bool enable);
 
@@ -345,6 +346,9 @@ namespace BitTorrent
         QQueue<EventTrigger> m_moveFinishedTriggers;
         int m_renameCount = 0;
         bool m_storageIsMoving = false;
+        qreal m_moveProgress = 0;
+        qlonglong m_moveTotalBytes = 0;
+        Path m_moveDestPath;
 
         QQueue<EventTrigger> m_statusUpdatedTriggers;
 
